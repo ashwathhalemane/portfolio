@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-
+import json
 # ---- PAGE CONFIG ----
 st.set_page_config(page_title="Ashwath's Portfolio",
                    layout="wide", page_icon="👨🏾‍🍳")
@@ -8,6 +8,72 @@ st.set_page_config(page_title="Ashwath's Portfolio",
 # ---- HEADER ----
 # st.markdown("<h1 style='text-align: center;'>Welcome to Ashwath's Portfolio 👋</h1>", unsafe_allow_html=True)
 # st.write("---")
+
+# add a quote from an API without using an API key
+quote_data = requests.get("https://zenquotes.io/api/today")
+if quote_data.status_code == 200:
+    quote_json = json.loads(quote_data.text)
+    quote = quote_json[0]['q']
+    author = quote_json[0]['a']
+    # st.markdown(
+    #     f"<h1 style='text-align: center;'>\"{quote}\" - {author}</h1>", unsafe_allow_html=True)
+    st.markdown(
+        f"""
+    <style>
+    @keyframes fadeIn {{
+        from {{ opacity: 0; }}
+        to {{ opacity: 1; }}
+    }}
+
+    @keyframes typing {{
+        from {{ width: 0; }}
+        to {{ width: 100%; }}
+    }}
+
+    @keyframes blink {{
+        50% {{ border-color: transparent; }}
+    }}
+
+    .quote-container {{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+    }}
+
+    .quote {{
+        font-size: 28px;
+        font-weight: bold;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        border-right: 3px solid #666;
+        width: 0;
+        animation: typing 4s steps(40, end) forwards, blink 0.75s step-end infinite;
+    }}
+
+    .author {{
+        font-size: 20px;
+        text-align: center;
+        margin-top: 10px;
+        opacity: 0;
+        animation: fadeIn 2s ease-in forwards;
+        animation-delay: 4s; /* show after quote finishes typing */
+    }}
+    </style>
+
+    <div class="quote-container">
+        <div>
+            <div class="quote">"{quote}"</div>
+            <div class="author">- {author}</div>
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True
+    )
+else:
+    st.error("Failed to fetch a quote.")
+
 
 # ---- SUMMARY ----
 st.subheader("✔️ Summary")
@@ -115,10 +181,11 @@ with st.expander("Computer Graphics"):
 
 st.write("---")
 
-res = requests.get("https://api.chucknorris.io/jokes/random")
+# add a random Chuck Norris joke using an API without using an API key
+chuck = requests.get("https://api.chucknorris.io/jokes/random")
 
-if res.status_code == 200:
-    joke = res.json().get("value")
+if chuck.status_code == 200:
+    joke = chuck.json().get("value")
     st.info(f"💡 Chuck Norris Joke: {joke}")
 else:
     st.error("Failed to fetch a Chuck Norris joke.")
