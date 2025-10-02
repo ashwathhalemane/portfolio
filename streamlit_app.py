@@ -1,4 +1,5 @@
 import streamlit as st
+import requests
 
 # ---- PAGE CONFIG ----
 st.set_page_config(page_title="Ashwath's Portfolio",
@@ -113,4 +114,12 @@ with st.expander("Computer Graphics"):
         "Foundations of Graphics, Rasterization, Interpolation, Tessellation, Textures.")
 
 st.write("---")
+
+res = requests.get("https://api.chucknorris.io/jokes/random")
+
+if res.status_code == 200:
+    joke = res.json().get("value")
+    st.info(f"💡 Chuck Norris Joke: {joke}")
+else:
+    st.error("Failed to fetch a Chuck Norris joke.")
 st.success("🚀 Thanks for visiting my portfolio!")
